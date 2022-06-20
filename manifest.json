@@ -1,0 +1,32 @@
+{
+  "name": "Jira Foresight",
+  "version": "0.1.0",
+  "description": "View and manage JIRA issue details from its issue keys on Github",
+  "permissions": ["storage", "tabs"],
+  "host_permissions": ["https://*.github.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["https://*.github.com/*"],
+      "js": ["contentScript.js"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "main.js",
+        "utils.js"
+      ],
+      "matches": ["https://*.github.com/*"]
+    }
+  ],
+  "action": {
+    "default_icon": {
+      "16": "assets/icon.png",
+      "24": "assets/icon.png",
+      "32": "assets/icon.png"
+    },
+    "default_title": "Jira Foresight",
+    "default_popup": "popup.html"
+  },
+  "manifest_version": 3
+}
