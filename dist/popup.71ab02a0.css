@@ -1,0 +1,40 @@
+.container {
+  width: 280px;
+  color: #314d3e;
+}
+
+.title {
+  padding: 8px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.textbox {
+  width: 100%;
+  margin: 0;
+  padding: 0 2px;
+  font-size: 12px;
+}
+
+.textbox:focus {
+  border-color: #66afe9;
+  outline: 0;
+}
+
+.issues {
+  margin: 5px;
+  padding: 3px;
+}
+
+.issue {
+  border-bottom: 1px solid #00254d;
+  margin-bottom: 7px;
+  padding: 3px 3px 7px;
+  display: flex;
+}
+
+.issue-title {
+  padding-left: 2px;
+}
+
+/*# sourceMappingURL=popup.71ab02a0.css.map */
