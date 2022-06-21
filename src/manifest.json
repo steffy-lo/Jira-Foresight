@@ -4,6 +4,9 @@
   "description": "View and manage JIRA issue details from its issue keys on Github",
   "permissions": ["storage", "tabs"],
   "host_permissions": ["https://*.github.com/*"],
+  "background":{
+    "script": ["background.js"]
+  },
   "content_scripts": [
     {
       "matches": ["https://*.github.com/*"],
@@ -21,9 +24,9 @@
   ],
   "action": {
     "default_icon": {
-      "16": "assets/icon.png",
-      "24": "assets/icon.png",
-      "32": "assets/icon.png"
+      "16": "../assets/icon.png",
+      "24": "../assets/icon.png",
+      "32": "../assets/icon.png"
     },
     "default_title": "Jira Foresight",
     "default_popup": "popup.html"
