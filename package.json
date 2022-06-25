@@ -26,7 +26,7 @@
   "scripts": {
     "prebuild": "rm -rf dist .cache .parcel-cache",
     "build:tailwind": "tailwindcss build src/style.css -c ./tailwind.config.js -o dist/style.css",
-    "watch": "npm run build:tailwind && parcel watch --no-hmr \"src/*\"",
-    "build": "npm run build:tailwind && copy 'src/manifest.json' 'dist/' && parcel build \"src/*\""
+    "watch": "npm run build:tailwind && cp 'src/manifest.json' 'dist/' && parcel watch --no-hmr \"src/*.js\" \"src/*.html\"",
+    "build": "npm run build:tailwind && cp 'src/manifest.json' 'dist/' && parcel build \"src/*.js\" \"src/*.html\""
   }
 }
