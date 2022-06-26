@@ -1,5 +1,5 @@
 .container {
-  width: 280px;
+  width: 500px;
   color: #314d3e;
 }
 
@@ -21,21 +21,6 @@
   border-color: #66afe9;
 }
 
-.issues {
-  margin: 5px 5px;
-  padding: 3px;
-}
-
 .issue {
-  display: flex;
-  border-bottom-color: #00254d;
-  border-bottom-width: 1px;
-  border-bottom-style: solid;
-  padding: 3px;
-  padding-bottom: 7px;
-  margin-bottom: 7px;
-}
-
-.issue-title {
-  padding-left: 2px;
+  padding-top: 10px;
 }
