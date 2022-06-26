@@ -43,21 +43,38 @@ const addNewIssue = (issues, issue) => {
 
 const viewIssues = (issues = []) => {
   const container = document.getElementsByClassName("container")[0];
-  container.innerHTML = `
-  <div class="p-3">
-    <div class="text-lg">Issues for this pull request</div>
-    <div id="issues"></div>
-  </div>
-  `;
-
-  const issuesElement = document.getElementById("issues");
-  issuesElement.innerHTML = "";
-
   if (issues.length > 0) {
     getIssueDetails(issues).then(data => {
+      container.innerHTML = `
+      <div class="p-3">
+        <div class="text-lg font-semibold">Issues for this pull request</div>
+        <div id="issues"></div>
+      </div>
+      `;
+      const issuesElement = document.getElementById("issues");
+      issuesElement.innerHTML = "";
       data.issues.forEach(issue => {
         addNewIssue(issuesElement, issue);
       });
+    }).catch(() => {
+      container.innerHTML = 
+      `<div id="error" class="p-6">
+        <p class="text-sm flex text-center justify-center">Unable to fetch issue details.<br>Please try again later or reset your credentials.</p>
+      </div>`;
+      const resetBtnContainer = document.createElement("div");
+      const resetBtn = document.createElement("button");
+      resetBtn.className = "inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out";
+      resetBtn.innerHTML += "Reset";
+      resetBtn.onclick = function () {
+        localStorage.removeItem('username');
+        localStorage.removeItem('atlassian-host');
+        localStorage.removeItem('atlassian-token');
+        document.location.reload();
+      }
+      resetBtnContainer.className = "flex space-x-2 justify-center p-3";
+      resetBtnContainer.appendChild(resetBtn);
+      const errorElement = document.getElementById("error");
+      errorElement.appendChild(resetBtnContainer);
     });
   } else {
     issuesElement.innerHTML = '<i class="row">No issues to show</i>';
