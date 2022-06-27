@@ -1,5 +1,5 @@
 import { getIssueDetails } from "./jira.js";
-import { getActiveTabURL, getPRInfo } from "./utils.js";
+import { addAttachmentsOnClickFunction, getActiveTabURL, getAttachmentsHTML, getPRInfo, getStatusPillClass } from "./utils.js";
 
 const addNewIssue = (issues, issue) => {
   const hostname = localStorage.getItem('atlassian-host');
@@ -8,15 +8,24 @@ const addNewIssue = (issues, issue) => {
   newIssueElement.id = "issue-" + issue.key;
   newIssueElement.className = "issue";
   newIssueElement.setAttribute("key", issue.key);
-  const { summary, description, watches, comment } = issue.fields;
+  const { summary, description, watches, comment, status, issuetype, attachment} = issue.fields;
   newIssueElement.innerHTML += `
   <div class="h-min w-full">
     <div class="h-full border-2 border-gray-200 rounded-lg overflow-hidden">
       <div class="p-3">
-        <h2 class="tracking-widest text-xs title-font font-medium text-gray-500 mb-1">${issue.key}</h2>
-        <h1 class="title-font text-lg font-medium text-gray-900 mb-3">${summary || "No summary"}</h1>
-        <p class="leading-relaxed mb-3">${description || "No description"}</p>
-        <div class="flex items-center flex-wrap ">
+        <div class="flex items-center mb-1">
+          <h2 class="tracking-widest text-xs title-font font-medium text-gray-500">${issue.key}</h2>
+          <span class="mx-2 px-2 ${getStatusPillClass(status.name)} text-sm font-medium rounded-full">
+	          ${status.name}
+          </span>
+        </div>
+        <div class="flex items-start mb-3">
+          <img class="mr-2 py-2" src=${issuetype.iconUrl} alt='type' data-bs-toggle="tooltip" title="${issuetype.name}"/>
+          <h1 class="title-font text-lg font-medium text-gray-900">${summary || "No summary"}</h1>
+        </div>
+        <p class="leading-relaxed mb-3" style="white-space: pre-line">${description || "No description"}</p>
+        ${getAttachmentsHTML(issue.key, attachment)}
+        <div class="flex items-center flex-wrap">
           <a href=${issueLink} target="_blank" class="text-blue-600 inline-flex items-center md:mb-2 lg:mb-0">View Issue
             <svg class="w-4 h-4 ml-2" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
               <path d="M5 12h14"></path>
@@ -59,13 +68,27 @@ const viewIssues = (issues = []) => {
       container.innerHTML = `
       <div class="p-3">
         <div class="text-lg font-semibold">Issues for this pull request</div>
+        <div id="img-modal" class="modal">
+          <span class="close">&times;</span>
+          <!-- Modal Content (The Image) -->
+          <img class="modal-content" id="modal-img">
+          <!-- Modal Caption (Image Name) -->
+          <div id="caption"></div>
+        </div>
         <div id="issues"></div>
       </div>
       `;
+      const modal = document.getElementById("img-modal");
+      const imgModalCloseBtn = document.getElementsByClassName("close")[0];
+      imgModalCloseBtn.onclick = function() {
+        modal.style.display = "none";
+      }
+
       const issuesElement = document.getElementById("issues");
       issuesElement.innerHTML = "";
       data.issues.forEach(issue => {
         addNewIssue(issuesElement, issue);
+        addAttachmentsOnClickFunction(issue);
       });
     }).catch(() => {
       container.innerHTML = 
