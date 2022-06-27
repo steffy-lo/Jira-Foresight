@@ -20,7 +20,6 @@ router.post("/issues", async (req, res) => {
     "jql": `key in (${issueKeys.join()})`,
     "fields": [
       "issuetype",
-      "project",
       "summary",
       "description",
       "priority",
