@@ -8,20 +8,29 @@ const addNewIssue = (issues, issue) => {
   newIssueElement.id = "issue-" + issue.key;
   newIssueElement.className = "issue";
   newIssueElement.setAttribute("key", issue.key);
-  const { summary, description, watches, comment, status, issuetype, attachment} = issue.fields;
+  const { summary, description, watches, comment, status, issuetype, attachment, assignee, priority} = issue.fields;
   newIssueElement.innerHTML += `
   <div class="h-min w-full">
     <div class="h-full border-2 border-gray-200 rounded-lg overflow-hidden">
       <div class="p-3">
-        <div class="flex items-center mb-1">
-          <h2 class="tracking-widest text-xs title-font font-medium text-gray-500">${issue.key}</h2>
-          <span class="mx-2 px-2 ${getStatusPillClass(status.name)} text-sm font-medium rounded-full">
-	          ${status.name}
-          </span>
+        <div class="flex justify-between mb-1">
+          <div class="flex items-center">
+            <h2 class="tracking-widest text-xs title-font font-medium text-gray-500">${issue.key}</h2>
+            <span class="mx-2 px-2 ${getStatusPillClass(status.name)} text-sm font-medium rounded-full">
+              ${status.name}
+            </span>
+          </div>
+          <div class="flex items-center" title="Assignee">
+            <img class="max-h-5 mr-2" src=${assignee.avatarUrls['48x48']} alt=avatar>
+            <p>${assignee.displayName}</p>
+          </div> 
         </div>
-        <div class="flex items-start mb-3">
-          <img class="mr-2 py-2" src=${issuetype.iconUrl} alt='type' data-bs-toggle="tooltip" title="${issuetype.name}"/>
-          <h1 class="title-font text-lg font-medium text-gray-900">${summary || "No summary"}</h1>
+        <div class="flex justify-between mb-3">
+          <div class="flex items-start mb-3 w-5/6">
+            <img class="mr-2 py-2" src=${issuetype.iconUrl} alt=type data-bs-toggle="tooltip" title="${issuetype.name}"/>
+            <h1 class="title-font text-lg font-medium text-gray-900">${summary || "No summary"}</h1>
+          </div>
+          <img class="max-h-5" src=${priority.iconUrl} alt=priority title=Priority>
         </div>
         <p class="leading-relaxed mb-3" style="white-space: pre-line">${description || "No description"}</p>
         ${getAttachmentsHTML(issue.key, attachment)}

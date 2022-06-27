@@ -45,6 +45,7 @@ export function getAttachmentsHTML(key, attachments) {
             img.className = "w-1/4 modal-img pr-1 border-solid";
             img.src = attachment.thumbnail || '/assets/file-icon.png';
             img.alt = attachment.filename;
+            img.title = attachment.filename;
             attachmentsElement.appendChild(img);
         });
     }
