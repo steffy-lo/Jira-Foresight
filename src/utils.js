@@ -37,13 +37,13 @@ export function getStatusPillClass(status) {
 
 export function getAttachmentsHTML(key, attachments) {
     const attachmentsElement = document.createElement("div");
-    attachmentsElement.className = "mb-3";
+    attachmentsElement.className = "mb-3 flex";
     if (attachments.length > 0) {
         attachments.forEach((attachment, index) => {
             const img = document.createElement("img");
             img.id = `${key}-attachment${index}`;
-            img.className = "w-1/4 modal-img";
-            img.src = attachment.thumbnail;
+            img.className = "w-1/4 modal-img pr-1 border-solid";
+            img.src = attachment.thumbnail || '/assets/file-icon.png';
             img.alt = attachment.filename;
             attachmentsElement.appendChild(img);
         });
@@ -55,14 +55,16 @@ export function getAttachmentsHTML(key, attachments) {
 
 export function addAttachmentsOnClickFunction(issue) {
     issue.fields.attachment.forEach((attachment, index) => {
-        const modal = document.getElementById("img-modal");
-        const modalImg = document.getElementById("modal-img");
-        const captionText = document.getElementById("caption");
-        const img = document.getElementById(`${issue.key}-attachment${index}`);
-        img.onclick = function () {
-            modal.style.display = "block";
-            modalImg.src = attachment.content;
-            captionText.innerHTML = attachment.filename;
+        if (attachment.thumbnail) {
+            const modal = document.getElementById("img-modal");
+            const modalImg = document.getElementById("modal-img");
+            const captionText = document.getElementById("caption");
+            const img = document.getElementById(`${issue.key}-attachment${index}`);
+            img.onclick = function () {
+                modal.style.display = "block";
+                modalImg.src = attachment.content;
+                captionText.innerHTML = attachment.filename;
+            }
         }
     });
 }
