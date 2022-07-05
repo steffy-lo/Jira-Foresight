@@ -1,2 +1,12 @@
 @import "tailwindcss/base";
 @import "tailwindcss/utilities";
+
+#issue-div{
+    position: absolute;
+    z-index: 1000;
+    background-color: white;
+    border-radius: 7px;
+    border: 1px solid lightgrey;
+    font-size:10px;
+    width:450px;
+}

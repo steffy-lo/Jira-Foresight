@@ -2,7 +2,10 @@ import { getIssueDetails } from "./jira.js";
 import { addAttachmentsOnClickFunction, getActiveTabURL, getAttachmentsHTML, getPRInfo, getStatusPillClass } from "./utils.js";
 
 const addNewIssue = (issues, issue) => {
-  const hostname = localStorage.getItem('atlassian-host');
+  let hostname;
+  chrome.storage.sync.get(['atlassian-host'], data=>{
+    hostname = data['atlassian-host'];
+  });
   const issueLink = `${hostname}/browse/${issue.key}`;
   const newIssueElement = document.createElement("div");
   newIssueElement.id = "issue-" + issue.key;
@@ -15,20 +18,20 @@ const addNewIssue = (issues, issue) => {
       <div class="p-3">
         <div class="flex justify-between mb-1">
           <div class="flex items-center">
-            <h2 class="tracking-widest text-xs title-font font-medium text-gray-500">${issue.key}</h2>
+            <h2 class="tracking-widest text-xs title-font font-medium text-gray-500" style="border:none !important">${issue.key}</h2>
             <span class="mx-2 px-2 ${getStatusPillClass(status.name)} text-sm font-medium rounded-full">
               ${status.name}
             </span>
           </div>
           <div class="flex items-center" title="Assignee">
             <img class="max-h-5 mr-2" src=${assignee.avatarUrls['48x48']} alt=avatar>
-            <p>${assignee.displayName}</p>
+            <p class="m-0">${assignee.displayName}</p>
           </div> 
         </div>
         <div class="flex justify-between mb-3">
           <div class="flex items-start mb-3 w-5/6">
             <img class="mr-2 py-2" src=${issuetype.iconUrl} alt=type data-bs-toggle="tooltip" title="${issuetype.name}"/>
-            <h1 class="title-font text-lg font-medium text-gray-900">${summary || "No summary"}</h1>
+            <h1 class="title-font text-lg font-medium text-gray-900 m-0" style="border:none !important">${summary || "No summary"}</h1>
           </div>
           <img class="max-h-5" src=${priority.iconUrl} alt=priority title=Priority>
         </div>
@@ -73,7 +76,9 @@ const viewIssues = (issues = []) => {
         <div class="text-lg text-center p-3 font-semibold">Fetching issues for this pull request...</div>
       </div>
       `;
-    getIssueDetails(issues).then(data => {
+    getIssueDetails(issues).then(res => {
+      console.log(res)
+      if (res) {
       container.innerHTML = `
       <div class="p-3">
         <div class="text-lg font-semibold">Issues for this pull request</div>
@@ -95,11 +100,13 @@ const viewIssues = (issues = []) => {
 
       const issuesElement = document.getElementById("issues");
       issuesElement.innerHTML = "";
-      data.issues.forEach(issue => {
+      res.issues.forEach(issue => {
         addNewIssue(issuesElement, issue);
         addAttachmentsOnClickFunction(issue);
       });
-    }).catch(() => {
+    }
+    }).catch((err) => {
+      console.log(err)
       container.innerHTML = 
       `<div id="error" class="p-6">
         <p class="text-sm flex text-center justify-center">Unable to fetch issue details.<br>Please try again later or reset your credentials.</p>
@@ -109,10 +116,8 @@ const viewIssues = (issues = []) => {
       resetBtn.className = "inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out";
       resetBtn.innerHTML += "Reset";
       resetBtn.onclick = function () {
-        localStorage.removeItem('username');
-        localStorage.removeItem('atlassian-host');
-        localStorage.removeItem('atlassian-token');
-        document.location.reload();
+      chrome.storage.sync.remove(['username', 'atlassian-host', 'atlassian-token']);
+      document.location.reload();
       }
       resetBtnContainer.className = "flex space-x-2 justify-center p-3";
       resetBtnContainer.appendChild(resetBtn);
@@ -129,27 +134,28 @@ document.addEventListener("DOMContentLoaded", async () => {
   const { prNum } = getPRInfo(activeTab.url);
 
   if (activeTab.url.includes("github.com") && prNum) {
-    chrome.storage.sync.get([prNum], (data) => {
-      const issues = data[prNum] ? JSON.parse(data[prNum]) : [];
+    chrome.storage.sync.get([prNum, 'username', 'atlassian-host', 'atlassian-token'], (chromeStorage) => {
+      const issues = chromeStorage[prNum] ? JSON.parse(chromeStorage[prNum]) : [];
       document.getElementById("authenticate-btn").onclick = function () {
-        localStorage.setItem('username', document.getElementById("username").value);
-        localStorage.setItem('atlassian-host', document.getElementById("hostname").value);
-        localStorage.setItem('atlassian-token', document.getElementById("token").value);
+        chrome.storage.sync.set({
+          'username': document.getElementById("username").value,
+          'atlassian-host':document.getElementById("hostname").value,
+          'atlassian-token':document.getElementById("token").value
+        });
         viewIssues(issues);
+        
       };
-
-      // Get local storage for Altassian host name and API token
-      // If have, we call viewIssues
-      const username = localStorage.getItem('username');
-      const hostname = localStorage.getItem('atlassian-host');
-      const apiToken = localStorage.getItem('atlassian-token');
+      const username = chromeStorage['username'];
+      const hostname = chromeStorage['atlassian-host'];
+      const apiToken = chromeStorage['atlassian-token'];
       if (username && hostname && apiToken) {
         viewIssues(issues);
       }
-    });
+  });
   } else {
     const container = document.getElementsByClassName("container")[0];
     container.innerHTML = '<div class="title">This is not a GitHub Pull Request page.</div>';
   }
 });
 
+export {addNewIssue, viewIssues}

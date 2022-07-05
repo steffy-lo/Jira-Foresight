@@ -10,13 +10,14 @@
   "content_scripts": [
     {
       "matches": ["https://*.github.com/*"],
-      "js": ["contentScript.js"]
+      "js": ["contentScript.js"],
+      "css":  ["style.css"]
     }
   ],
   "web_accessible_resources": [
     {
       "resources": [
-        "main.js",
+        "popup.js",
         "utils.js"
       ],
       "matches": ["https://*.github.com/*"]
