@@ -2,10 +2,18 @@ import { getIssueDetails } from "./jira.js";
 import { addAttachmentsOnClickFunction, getActiveTabURL, getAttachmentsHTML, getPRInfo, getStatusPillClass } from "./utils.js";
 
 const addNewIssue = (issues, issue) => {
-  let hostname;
-  chrome.storage.sync.get(['atlassian-host'], data=>{
-    hostname = data['atlassian-host'];
+  const data = await new Promise((resolve, reject) => {
+    chrome.storage.sync.get(
+      ["atlassian-host"],
+      async function (data) {
+        if (chrome.runtime.lastError) {
+          return reject(chrome.runtime.lastError);
+        }
+        resolve(data);
+      }
+    );
   });
+  const hostname = data["atlassian-host"];
   const issueLink = `${hostname}/browse/${issue.key}`;
   const newIssueElement = document.createElement("div");
   newIssueElement.id = "issue-" + issue.key;
@@ -77,7 +85,6 @@ const viewIssues = (issues = []) => {
       </div>
       `;
     getIssueDetails(issues).then(res => {
-      console.log(res)
       if (res) {
       container.innerHTML = `
       <div class="p-3">
@@ -116,8 +123,9 @@ const viewIssues = (issues = []) => {
       resetBtn.className = "inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out";
       resetBtn.innerHTML += "Reset";
       resetBtn.onclick = function () {
-      chrome.storage.sync.remove(['username', 'atlassian-host', 'atlassian-token']);
-      document.location.reload();
+      chrome.storage.sync.remove(['username', 'atlassian-host', 'atlassian-token'], ()=>{
+        document.location.reload();
+      });
       }
       resetBtnContainer.className = "flex space-x-2 justify-center p-3";
       resetBtnContainer.appendChild(resetBtn);
