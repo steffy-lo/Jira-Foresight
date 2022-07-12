@@ -1,11 +1,7 @@
 import { addNewIssue } from "./popup.js";
 import {
   addAttachmentsOnClickFunction,
-  getActiveTabURL,
-  getAttachmentsHTML,
-  getPRInfo,
-  getStatusPillClass,
-  getElementsByTextFromElements,
+  getPRInfo
 } from "./utils.js";
 import { getIssueDetails } from "./jira.js";
 

@@ -1,7 +1,7 @@
 import { getIssueDetails } from "./jira.js";
 import { addAttachmentsOnClickFunction, getActiveTabURL, getAttachmentsHTML, getPRInfo, getStatusPillClass } from "./utils.js";
 
-const addNewIssue = (issues, issue) => {
+const addNewIssue = async (issues, issue) => {
   const data = await new Promise((resolve, reject) => {
     chrome.storage.sync.get(
       ["atlassian-host"],
@@ -166,4 +166,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-export {addNewIssue, viewIssues}
+console.log("CHECK")
+
+export {addNewIssue}
