@@ -166,6 +166,4 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-console.log("CHECK")
-
 export {addNewIssue}
