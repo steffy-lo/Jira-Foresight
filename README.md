@@ -130,11 +130,11 @@ After following installation instructions, go to a GitHub PR page, click on the 
 
 Then, you will see all the PRs in the extension.
 
-![step2](./screenshots/step-2.PNG)
+![step2](./screenshots/step-2.png)
 
 Hover on the PR ticket number to view the details individually.
 
-![step3](./screenshots/step-3.PNG)
+![step3](./screenshots/step-3.png)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
